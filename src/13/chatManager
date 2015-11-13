@@ -1,0 +1,24 @@
+rednet.open("top")
+while true do
+  local sID,sNum=rednet.receive(1)
+  id=sID
+  num=sNum
+  if (num==nil)==false and (id==nil)==false then
+    telList=fs.list("telNumbers/")
+    for k,v in pairs(telList) do
+      if num==v then
+        numFile=io.open("telNumbers/"..v,"r")
+        number=numFile.read()
+        numFile:close()
+      end
+    end
+    plp=num
+    function chatHost()
+      shell.run("chat host "..plp)
+    end
+    rednet.send(tonumber(number),plp)
+    rednet.send(14,plp)
+    
+    chatHost()
+  end
+end

@@ -1,0 +1,43 @@
+debug={}
+
+DebugMSG="          Debugging: OK"
+DebugMSGStop="          Debugging: stopped"
+DebugCounter=0
+DMSGC=DebugMSG.." "..DebugCounter
+
+function DB(notice)
+  if Debugging==true then
+    local DEBx,DEBy = term.getCursorPos()
+    
+    if notice==nil then
+      notice=""
+    end 
+    
+    if DebugCounter==0 then
+      term.setCursorPos(51-(#DebugMSG+#notice)+1,19)
+      write(DebugMSG.." "..notice)
+      term.setCursorPos(DEBx,DEBy)
+      DebugCounter= DebugCounter+1
+    else
+      term.setCursorPos(51-(#DMSGC+#notice),19)
+      write(DebugMSG.." "..DebugCounter.." "..notice)
+      term.setCursorPos(DEBx,DEBy)
+    end    
+    DebugCounter=DebugCounter+1
+  else
+    DebugCounter=0
+  end
+end
+
+debug["start"] = function()
+  Debugging=true
+end
+
+debug["stop"] = function()
+  Debugging=false
+  DebugCounter=0
+  local DebStopX,DebStopY=term.getCursorPos()
+  term.setCursorPos(51-#DebugMSGStop+1,19)
+  write(DebugMSGStop)
+  term.setCursorPos(DebStopX,DebStopY)
+end

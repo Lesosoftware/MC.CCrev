@@ -1,0 +1,4 @@
+shell.run("cd /Computer")
+term.clear()
+term.setCursorPos(1,1)
+shell.run("dir")

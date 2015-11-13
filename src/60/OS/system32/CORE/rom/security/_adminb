@@ -1,0 +1,24 @@
+shell.run("clear")
+
+function pass()
+  accpt = 0
+  print("---------------------------------------------------")
+  print("                Sicherheits-Aufforderung")
+  print("---------------------------------------------------")
+  print("\n\n\n\n")
+  write("        Passwort eingeben: ")
+  Pass =io.read()
+  kennfile = io.open("/OS/CORE/config/passwort","r")
+  passwort = kennfile.read()
+  kennfile:close()
+  if Pass==passwort then
+    accpt = 1
+    shell.run("clear")
+    return
+  else
+    shell.run("clear")
+    pass()
+  end
+end
+
+pass()

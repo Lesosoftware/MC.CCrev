@@ -1,0 +1,47 @@
+system_CORE="/OS/system/CORE/"
+
+oldTerm={}
+for k,v in pairs(term) do
+  oldTerm[k]=v
+end
+function wfb(bff)
+  local fl=io.open(system_CORE.."actDesk/fbuff","w")
+  fl:write(bff)
+  fl:close()
+end
+function clearFB()
+  local sx,sy=term.getCursorPos()
+  wfb("term.clear()\nterm.setCursorPos("..sx..","..sy..")")
+end
+clearFB()
+function afb(cmd)
+  local fl=io.open(system_CORE.."actDesk/fbuff","a")
+  fl:write("\n"..cmd)
+  fl:close()
+end
+term["write"]=function(text)
+  afb("term.write('"..text.."')")
+  oldTerm.write(text)
+end
+term["clear"]=function()
+  clearFB()
+  oldTerm.clear()
+end
+term["setCursorPos"]=function(x,y)
+  afb("term.setCursorPos("..x..","..y..")")
+  oldTerm.setCursorPos(x,y)
+end
+term["setTextColor"]=function(col)
+  afb("term.setTextColor("..col..")")
+  oldTerm.setTextColor(col)
+end
+term["setTextColour"]=function(col)
+  term.setTextColor(col)
+end
+term["setBackgroundColour"]=function(col)
+  term.setBackgroundColor(col)
+end
+term["setBackgroundColor"]=function(col)
+  afb("term.setBackgroundColor("..col..")")
+  oldTerm.setBackgroundColor(col)
+end

@@ -1,0 +1,139 @@
+tArgs={...}
+
+--variables
+wrongUsage="Usage: zip <path> [pack/read/unpack] [to path]"
+vaildZip="--(C) Sewbacca Technologies Inc. ZIP programmCode: -- cs4856658zip --"
+sToDo=nil
+toDo=nil
+vailded=false
+-----------
+
+--functions
+
+function isZip(sPath)
+
+  fileEnd   = string.gsub(tArgs[1],"%.",":")
+  if (string.find(fileEnd,":")==nil)==false then
+    zipEnding = string.sub(tArgs[1],string.find(fileEnd,":")+1,#fileEnd)
+  end
+  
+  if zipEnding=="zip" then
+    zipEnding=true
+    zipFolder=io.open(sPath,"r")
+    zipCode=zipFolder.read()
+    if zipCode == vaildZip then
+      firstLine=true
+    else
+      firstLine=false
+    end
+    zipFolder:close()
+  else
+    zipEnding=false
+  end
+  
+  if zipEnding and firstLine then
+    return true
+  else
+    return false
+  end
+end
+
+folders={}
+
+function listDirs(dir)
+  table.insert(folders,dir)
+end
+
+function writeData(tPath,toSave)
+  file=io.open(tPath,"r")
+  tmp=file.read()
+  red=""
+  
+  while (tmp==nil)==false do
+    red=red.."\\n"..tmp
+  end
+  
+  file:close()
+  
+  file=io.open(toSave,"a")
+
+  if vailded==false then
+    file:write(vaildZip.."\n")
+    local vailded=true
+  end
+  
+  DataNameTMP  = string.reverse(tPath)
+  DataNameTMP2 = string.sub(DataNameTMP,1,string.find(DataNameTMP,"/")-1)
+  DataName     = string.reverse(DataNameTMP2)
+  
+  file:write("ZipList"..DataName.."=".."'"..red.."'")
+  file:close()
+end
+
+-----------
+
+--install zip API
+
+local zip={}
+
+zip["open"]=function(path)
+  print(tostring(isZip("/"..shell.dir().."/"..tArgs[1])))
+end
+
+zip["pack"]=function(path,toPath)
+  
+  if toPath==nil then
+    toPath=tArgs[1]
+  end
+  
+  if fs.isDir(tArgs[1]) then
+    toZip=fs.list(tArgs[1])
+    for k,v in pairs(toZip) do
+      if fs.isDir(v) then
+        listDirs(v)
+      else
+        writeData("/"..shell.dir().."/"..v,toPath)
+      end
+    end
+  else
+    error("is not a Folder")
+  end
+end
+
+zip["unpack"]=function(path,toPath)
+
+end
+
+--Main Program
+
+if #tArgs == 1 or #tArgs == 2 or #tArgs == 3 then
+
+  for k,v in pairs(zip) do
+    
+    if tArgs[2] == k then
+      sToDo = k
+    end
+    
+  end
+  
+  if tArgs[2] == nil then
+    toDo = "open"
+  else
+    toDo = sToDo
+  end
+  
+  if (tArgs[3] == nil)== false then
+    local tPath = tArgs[3]
+  end
+  
+  if fs.exists(tArgs[1]) == false then
+    error("File doesn't exists")
+  end
+  
+  zip[toDo](tArgs[2], tPath )
+  
+else
+  print(wrongUsage)
+end
+
+--------------

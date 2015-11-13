@@ -1,0 +1,9 @@
+rednet.open("back")
+while true do
+  local id,msg = rednet.receive(3)
+  if (id==nil)==false then
+    if string.find(msg,"openwifi_snd:")==1 then
+      commands.exec("playsound "..string.sub(msg,14))
+    end
+  end
+end

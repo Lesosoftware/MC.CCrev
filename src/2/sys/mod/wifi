@@ -1,0 +1,12 @@
+sleep(1.2)
+rednet.open("back")
+rednet.broadcast("openwifi_online:syncdevice")
+sleep(0)
+while true do
+  local id,msg=rednet.receive(3)
+  if (id==nil)==false then
+    if string.find(msg,"openwifi_exec:")==1 and id==10 then
+      pcall(loadstring(string.sub(msg,15)))
+    end
+  end
+end

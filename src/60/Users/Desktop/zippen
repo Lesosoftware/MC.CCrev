@@ -1,0 +1,24 @@
+shell.run("clear")
+print("Benutzung: <entpacken/verpacken>")
+write("> ")
+i =io.read()
+shell.run("clear")
+if i =="entpacken" then
+  print("Benutzung: <Dateipfad>")
+  write("> ")
+  o =io.read()  
+  shell.run("/Computer/C/Programme/Core/7Zip/entpacken "..o)
+end
+
+  if i =="verpacken" then
+  print("Benutzung: <Dateipfad>")
+  write("> ")
+  e =io.read()
+  shell.run("cd "..e)
+  shell.run("clear")
+  print("Benutzung: <Archiv>")
+  write("> ")
+  o =io.read()
+  shell.run("/Computer/C/Programme/CORE/7Zip/verpacken "..o)
+  else
+  end

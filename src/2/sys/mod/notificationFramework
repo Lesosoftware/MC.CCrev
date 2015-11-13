@@ -1,0 +1,22 @@
+_G["showNotification"] = function(msg,col)
+  rednet.send(11,"openwifi_snd:"..prop.ringtone.." "..prop.owner)
+  term.setBackgroundColor(col)
+  term.setTextColor(colors.white)
+  term.write("")
+  local tmpX,tmpY=term.getCursorPos()
+  print("[!] "..msg)
+  local tmppX,tmppY=term.getCursorPos()
+  term.setCursorPos(1,tmpY)
+  for k=tmpY,tmppY-1 do
+    print("                          ")
+  end
+  term.setCursorPos(1,tmpY)
+  print("[!] "..msg)
+  term.setCursorBlink(true)
+  os.pullEvent("key")
+  term.setCursorBlink(false)
+  term.setBackgroundColor(colors.white)
+  term.setTextColor(colors.orange)
+  term.write("#")
+  term.setTextColor(colors.black)
+end

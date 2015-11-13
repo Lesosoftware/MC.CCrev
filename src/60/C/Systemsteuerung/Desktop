@@ -1,0 +1,2 @@
+shell.run("cd /Desktop")
+shell.run("Programme")

@@ -1,0 +1,91 @@
+term.setBackgroundColor(colors.black)
+term.setTextColor(colors.white)
+
+term.clear()
+
+--Variablen
+SewTecVersion="Sewbacca Technologies Inc."
+-----------
+function versions()
+  term.setCursorPos(51-#SewTecVersion+1,19)
+  write(SewTecVersion)
+  
+  term.setCursorPos(51-#os.version(),1)
+  write(os.version())
+end
+AllSystems=fs.list("/OS/system32")
+
+startSys=true
+startPage=true
+--if #AllSystems==1 then
+--  startSys=false
+--  for k,v in pairs(AllSystems) do
+--    shell.run("/OS/system32/"..v.."/startup")
+--  end
+--  startPage=false
+--elseif #AllSystems==nil then
+--  exit()
+--end
+--if startPage then
+  versions()
+  term.setCursorPos(1,1)
+  term.setBackgroundColor(colors.lightGray)
+  term.setTextColor(colors.black)
+  write("BUDDI Bootloader\n\n")
+  term.setBackgroundColor(colors.black)
+  term.setTextColor(colors.white)
+  write("Select your System:")
+  term.setCursorPos(2,2)
+  selSys=1
+  while startSys==true do
+    Ysys=2
+    for k,v in pairs(AllSystems) do
+      term.setCursorPos(1,k+4)
+      if selSys==k then
+        term.setBackgroundColor(colors.lightGray)
+        term.setTextColor(colors.black)
+        actSys=v
+      else
+        term.setBackgroundColor(colors.black)
+        term.setTextColor(colors.white)
+      end
+      write(v)
+      if #v>=30 then
+        vLengh=30
+      else
+        vLengh=#v
+      end
+      for i=1,30-vLengh do
+        write(" ")
+      end
+      Ysys=Ysys+2
+    end
+    
+    local id,key=os.pullEvent()
+    
+    if key==keys.down then
+      selSys=selSys+1
+      
+      if selSys>#AllSystems then
+        selSys=1
+      end
+    end
+    
+    if key==keys.up then
+      selSys=selSys-1
+      
+      if selSys<1 then
+        selSys=#AllSystems
+      end
+    end
+    
+    if key==keys.enter then
+      startSys=false
+      _G["loadSystem"] = true
+      shell.run("/OS/system32/"..actSys.."/startup")
+    end
+  end
+--else
+  term.clear()
+  term.setCursorPos(1,1)
+--end

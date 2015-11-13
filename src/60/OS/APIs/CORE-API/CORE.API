@@ -1,0 +1,5 @@
+if reg_CORE_API==nil then
+  shell.run("/OS/registry/reg.API")
+  reg.load(true)
+end
+shell.run(regAPI_CORE_API.."CORE.API-MAIN")

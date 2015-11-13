@@ -1,0 +1,40 @@
+
+local tArgs = { ... }
+
+-- Get all the files in the directory
+local sDir = shell.dir()
+if tArgs[1] ~= nil then
+	sDir = shell.resolve( tArgs[1] )
+else
+ print("Schreibweise: verpacken <Archiv>")
+ return
+end
+
+fList = fs.list( "/"..shell.dir().."/" )
+
+tmpProcFull = #fList
+tmpProcWritten = 0
+
+shell.run("mkdir /tmpArchiv.zip35923804290384098234")
+
+for tmpProc,dt in pairs(fList) do
+  shell.run("copy "..dt.." /tmpArchiv.zip35923804290384098234/"..dt)
+  tmpCnt=0
+  for i=tmpProcWritten,(tmpProc/tmpProcFull)*50 do
+    term.write("=")
+    tmpProcWritten = i
+    
+    tmpCnt=tmpCnt+1
+    if tmpCnt >=8 then
+      tmpCnt = 0
+      sleep(0)
+    end
+  end
+  sleep(0.1)
+end
+for tmpProc,dt in pairs(fList) do
+  shell.run("delete "..dt)
+end
+shell.run("move /tmpArchiv.zip35923804290384098234 /"..sDir)
+print("")
+write(tmpProcFull.." Dateien in "..tArgs[1].." verpackt!\n")

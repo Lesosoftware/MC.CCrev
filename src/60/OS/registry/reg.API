@@ -1,0 +1,50 @@
+_G["reg"]={}
+
+regAPIstarted=true
+
+_G["regAPI"]=function()
+  apiPath="/OS/registry/APIs/"
+  apiList=fs.list(apiPath)
+  if #apiList>0 then
+    for kA,v in pairs(apiList) do
+      shell.run(apiPath..v)
+      ProgressBarAPI=kA*100/#apiList
+      sleep(0)
+    end
+  end
+end
+
+_G["regProgs"]=function()
+  ProgsPath="/OS/registry/programs/"
+  ProgsList=fs.list(ProgsPath)
+  for kP,v in pairs(ProgsList) do
+    if #ProgsList>0 then
+      shell.run(ProgsPath..v)
+      ProgressBarProgs=kP*100/#ProgsList
+      sleep(0)
+    end
+  end
+end
+
+reg["load"]=function(isAPI)
+  if isAPI then
+    regAPI()
+  elseif isAPI==false then
+    regProgs()  
+  end
+end
+
+reg["assign"]=function(isAPI,regName,regRealation,asPath)
+  if isAPI then
+    regWritePath= "/OS/registry/APIs/"
+    regLoc="API"
+  elseif isAPI==false then
+    regWritePath= "/OS/registry/programs/"
+    regLoc="Progs"
+  else
+    return
+  end
+  regFile=io.open(regWritePath..regName,"a")
+  regFile:write("\n_G['reg"..regLoc..'_'..regRealation.."']=".."'"..asPath.."'")
+  regFile:close()
+end

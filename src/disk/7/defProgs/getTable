@@ -1,0 +1,33 @@
+tArgs={...}
+if #tArgs<1 then
+  error("Arguments expected got nil")
+end
+
+list=tArgs[1]
+
+if tArgs[1]=="shell" then
+  list=shell
+end
+
+
+if _G[list]==nil then
+  term.setTextColor(colors.red)
+  print("Ihre Tabelle konnte im Globalen Index nicht\ngefunden werden.")  
+  return
+else
+  print("")
+  for k,v in pairs(_G[list]) do
+    local x,y = term.getCursorPos()
+    if y==19 or y==18 then
+	  term.setCursorPos(1,19)
+	  write("Press any key to continue")
+	  os.pullEvent()
+	  term.setCursorPos(1,19)
+	  for i=1,51 do
+	    write(" ")
+	  end
+	end
+	term.setCursorPos(1,y)
+    print(tArgs[1].."."..k)
+  end
+end

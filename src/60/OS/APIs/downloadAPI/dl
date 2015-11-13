@@ -1,0 +1,24 @@
+closeSide="none"
+for k,v in pairs(rs.getSides()) do
+  if peripheral.getType(v)=="modem" then
+    if rednet.isOpen(v)==false then
+      closeSide=v
+      rednet.open(v)
+    end
+    break
+  end
+end
+args={...}
+rednet.broadcast("fReq:"..args[1])
+sleep(0.01)
+local id,res = rednet.receive(3)
+if res == nil then
+  print("Error")
+else
+  local fl=io.open(args[2],"w")
+  fl:write(string.sub(res,2))
+  fl:close()
+end
+if (closeSide=="none")==false then
+  rednet.close(closeSide)
+end

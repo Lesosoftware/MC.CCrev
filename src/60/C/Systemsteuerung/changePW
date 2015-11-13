@@ -1,0 +1,43 @@
+shell.run("/OS/CORE/0.1/adminb")
+shell.run("clear")
+function APW()
+  write("Altes Passwort eingeben: ")
+  aPW=io.read()
+  aPW1file=io.open("/OS/CORE/config/passwort","r")
+  aPW1=aPW1file.read()
+  aPW1file:close()
+  
+  if aPW==aPW1 then
+    shell.run("clear")
+    NPW()
+  else
+    print("\nAltes Passwort stimmt nicht uber ein")
+    os.pullEvent=os.pullEvent("key")
+    shell.run("clear")
+    APW()
+  end
+end
+function NPW()
+  write("Neues Passwort eingeben: ")
+  nPW=io.read()
+  write("\nPasswort wiederholen: ")
+  nPW2=io.read()
+  
+  if nPW==nPW2 then
+    shell.run("clear")
+    dt=io.open("/OS/CORE/config/passwort","w")
+    dt:write(nPW2)
+    dt:close()
+    shell.run("clear")
+    print("Passwort wurde erfolgreich geaendert")
+    os.pullEvent("key")
+    shell.run("cd /Desktop")
+    shell.run("Programme")
+    return
+  else
+     print("\nPassworter stimmen nicht uber ein")
+     NPW()
+  end
+end
+
+APW()

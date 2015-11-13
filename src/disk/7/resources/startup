@@ -1,0 +1,98 @@
+--Kein Adv. Comp
+if term.isColor()==false then
+  print("ERROR: No advanced Computer detected")
+  exit()
+end
+----------------
+
+--Variablen Farben
+local SewTecCol1    = colors.black
+local SewTecCol2    = colors.gray
+local SewTecCol3    = colors.lightGray
+local SewTecCol     = colors.white
+--Variablen
+local SewTec        ="Sewbacca Technologies Inc."
+local SewTecPath    ="/OS/system32/TaCCo/"
+local sleepTime     =0.01
+local sleepTotalTime=0.8
+------------------
+
+--Short Functions
+local function tw(text) term.write(text) end
+local function w(text) write(text) end
+local function p(text) print(text) end
+local function tusp(text) textutils.slowPrint(text) end
+
+local function tcl() term.clear() end
+local function tsbc(col) term.setBackgroundColor(col) end
+local function tstc(col) term.setTextColor(col) end
+local function pudi(path,tX,tY) if tX==nil then tX=1 end if tY==nil then tY=1 end paintutils.drawImage(paintutils.loadImage(path),1,1) end
+
+local function tscp(tX,tY) term.setCursorPos(tX,tY) end
+local function tgcp() return term.getCursorPos() end
+--Functions
+
+function runProgs()
+  shell.run("/OS/registry/reg.API")
+  reg.load(true)
+  reg.load(false)
+  reg.loadDefProgs()
+  if regAPI_SewTecPath==nil then
+    reg.assign(true,"SewTec","SewTecPath","/OS/APIs/SewTec-API/")
+	reg.load(true)
+  end
+  shell.run("/OS/APIs/SewTec-API/SewTec.API")
+  reg.loadDefProgs()
+  reg.loadHidden()
+  reg.loadTag()
+  shell.run(SewTecPath.."config/HiddenSyst")
+  shell.run(SewTecPath.."rom/programs/SetAlias")
+  shell.run(SewTecPath.."rom/programs/taskmgr loadAPI")
+end
+
+function SewTecAnimation (sY)
+  
+  local function sstap() tscp(51/2-(#SewTec/2),sY) end
+  
+  sstap()
+  tstc(SewTecCol1)
+  w(SewTec)
+  sstap()
+  sleep(sleepTime)
+  tstc(SewTecCol2)
+  w(SewTec)
+  sstap()
+  sleep(sleepTime)
+  tstc(SewTecCol3)
+  w(SewTec)
+  sleep(sleepTime)
+  tstc(SewTecCol)
+  sstap()
+  w(SewTec)
+  
+end
+
+
+-----------------
+
+--Main Program
+term.setBackgroundColor(colors.black)
+
+term.clear()
+term.setCursorPos(1,1)
+
+tsbc(colors.black)
+pudi(SewTecPath.."rom/media/BootLoader.png")
+sleep(0.1)
+tsbc(colors.black)
+sleep(1)
+SewTecAnimation(16)
+
+tsbc(colors.gray)
+runProgs()
+sleep(sleepTotalTime)
+tcl()
+tscp(1,1)
+--shell.exit()
+
+--shell.run(SewTecPath.."rom/shell")

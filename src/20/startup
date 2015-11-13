@@ -1,0 +1,20 @@
+while true do
+  while not turtle.suckDown() do
+    sleep(0.7)
+  end
+  turtle.dropUp()
+  local flashName=""
+  for k,v in pairs(fs.list("/flash")) do
+    if v=="flash.inf" then
+      local fl=io.open("/flash/flash.inf","r")
+      flashName=fl.lines()()
+      fl:close()
+    else
+      pcall(function()fs.copy("/flash/"..v,"/disk/"..v) end)
+    end
+  end
+  disk.setLabel("top",flashName)
+  turtle.suckUp()
+  turtle.drop()
+  sleep(3)
+end

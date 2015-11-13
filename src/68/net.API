@@ -1,0 +1,56 @@
+--variables
+
+standardPort = 0001
+
+--lists
+
+network = {}
+sides   = {"left","right","front","back","top","bottom"}
+
+--shortcuts
+
+local function openModem(chanel)
+  local  openSides = {}
+  local closeSides = {}
+  
+  if not chanel then
+    chanel = standardPort
+  end
+  
+  for side in sides do
+    if peripheral.type(side) == "modem" then
+      if rednet.isOpen(side) then table.insert(openSides,side)
+      else table.insert(closeSides,side) end
+    end
+  end
+  
+  if #openSides == 0 and #closeSides == 0 then return false end
+  
+  if #openSides == 0 then
+    for side in closeSides do
+      
+    end
+  end
+  
+  return true
+end
+
+--Install network API
+
+network["isWireless"] = function()
+  return wireless
+end
+
+network["search"] = function (port)
+  modem = openModem()
+  rednet.broadcast(tostring(port),"requestNetwork")
+  local event,modemSide,routerPort,myPort,routerIP,routerDistance = os.pullEvent("modem_event")
+  return (routerIP..":"..routerPort),myPort,routerDistance
+end
+
+network["connect"] = function(routerPort,overPort)
+
+end
+--Main program
+
+--End

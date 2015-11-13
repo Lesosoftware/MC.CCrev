@@ -1,0 +1,4 @@
+_G['hiddenSyst']={}
+hiddenSyst["TaCCo_rom_programs"] = "/OS/system32/TaCCo/rom"
+hiddenSyst["TaCCo_config"]       = "/OS/system32/TaCCo/config"
+hiddenSyst["buddi"]              = "/OS/buddi"
