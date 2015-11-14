@@ -42,14 +42,26 @@ network["isWireless"] = function()
 end
 
 network["search"] = function (port)
-  modem = openModem()
+  openModem()
+  local networks = {}
   rednet.broadcast(tostring(port),"requestNetwork")
-  local event,modemSide,routerPort,myPort,routerIP,routerDistance = os.pullEvent("modem_event")
-  return (routerIP..":"..routerPort),myPort,routerDistance
+  for i = 1,4 do
+    local ID,intoPort = rednet.receive("requestNetwork",5)
+    networks[ID]=intoPort
+  end
+  return networks
 end
 
-network["connect"] = function(routerPort,overPort)
-
+network["connect"] = function(routerID,overPort)
+  rednet.send(routerID,"request:ID",tostring(overPort))
+  while true do
+    local ID,myIP = rednet.receive(tostring(overPort),3)
+	if ID == routerID then
+	  break
+	end
+  end
+  
+  network[localIP] = myIP
 end
 --Main program
 
