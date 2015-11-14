@@ -38,9 +38,9 @@ end
 network["search"] = function (port)
   openModem()
   local networks = {}
-  rednet.broadcast(tostring(port),"requestNetwork")
-  for i = 1,4 do
-    local ID,intoPort = rednet.receive("requestNetwork",5)
+  for i = 1,5 do
+    rednet.broadcast(tostring(port),"requestNetwork")
+    local ID,intoPort = rednet.receive("requestNetwork",1)
     if ID then
       networks[ID]=intoPort
     end
