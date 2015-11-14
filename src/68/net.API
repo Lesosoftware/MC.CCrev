@@ -31,10 +31,6 @@ end
 
 --Install network API
 
-network["isWireless"] = function()
-  return wireless
-end
-
 network["search"] = function (port)
   openModem()
   local networks = {}
@@ -49,6 +45,7 @@ network["search"] = function (port)
 end
 
 network["connect"] = function(routerID,overPort)
+  rednet.send(routerID,"request:port")
   rednet.send(routerID,"request:ID",tostring(overPort))
   while true do
     local ID,myIP = rednet.receive(tostring(overPort),3)
