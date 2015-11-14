@@ -46,10 +46,7 @@ end
 
 network["connect"] = function(routerID,overPort)
   rednet.send(routerID,"request:port")
-<<<<<<< HEAD
-  sleep
-=======
->>>>>>> 4326de25550814efab6740a56f150e921afdef5d
+  sleep(0.1)
   rednet.send(routerID,"request:ID",tostring(overPort))
   while true do
     local ID,myIP = rednet.receive(tostring(overPort),3)
