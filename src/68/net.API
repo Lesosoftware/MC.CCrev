@@ -17,20 +17,14 @@ local function openModem(chanel)
     chanel = standardPort
   end
   
-  for side in sides do
-    if peripheral.type(side) == "modem" then
+  for _,side in pairs(sides) do
+    if peripheral.getType(side) == "modem" then
       if rednet.isOpen(side) then table.insert(openSides,side)
-      else table.insert(closeSides,side) end
+      else rednet.open(side) end
     end
   end
   
   if #openSides == 0 and #closeSides == 0 then return false end
-  
-  if #openSides == 0 then
-    for side in closeSides do
-      
-    end
-  end
   
   return true
 end
@@ -47,7 +41,9 @@ network["search"] = function (port)
   rednet.broadcast(tostring(port),"requestNetwork")
   for i = 1,4 do
     local ID,intoPort = rednet.receive("requestNetwork",5)
-    networks[ID]=intoPort
+    if ID then
+      networks[ID]=intoPort
+    end
   end
   return networks
 end
