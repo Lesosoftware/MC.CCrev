@@ -1,0 +1,12 @@
+noti1={
+  
+  "Hallo Noti1 ist angekommen",
+  colors.blue
+  
+}
+function sendNotification(id,noti)
+  rednet.send(id,"openwifi_exec:showNotification(\""..noti[1].."\","..noti[2]..")")
+end
+
+sleep(13)
+sendNotification(2,noti1)
