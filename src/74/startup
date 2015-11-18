@@ -1,3 +1,5 @@
+mon=peripheral.wrap("top")
+mon.setTextScale(0.5)
 
 -- Find modems
 local tModems = {}
@@ -34,6 +36,8 @@ print( "0 messages repeated." )
 open( rednet.CHANNEL_REPEAT )
 
 -- Main loop (terminate to break)
+travel=1
+local function main()
 local ok, error = pcall( function()
     local tReceivedMessages = {}
     local tReceivedMessageTimeouts = {}
@@ -42,6 +46,7 @@ local ok, error = pcall( function()
     while true do
         local sEvent, sModem, nChannel, nReplyChannel, tMessage = os.pullEvent()
         if sEvent == "modem_message" then
+        travel=travel+1
             -- Got a modem message, rebroadcast it if it's a rednet thing
             if nChannel == rednet.CHANNEL_REPEAT then
                 if type( tMessage ) == "table" and tMessage.nMessageID and tMessage.nRecipient then
@@ -89,3 +94,26 @@ end
 
 -- Close channels
 close( rednet.CHANNEL_REPEAT )
+end
+function ui()
+  mon.setBackgroundColor(colors.yellow)
+  mon.clear()
+  shell.run("monitor top logo")
+  while true do
+    if travel>0 then
+      travel=travel-1
+      for i=1,4 do
+        if i==1 or i==3 then
+          mon.setBackgroundColor(colors.black)
+        else
+          mon.setBackgroundColor(colors.lime)
+        end
+        mon.setCursorPos(2,10)
+        mon.write(" ")
+        sleep(0.08)
+      end
+    end
+    sleep(0.02)
+  end
+end
+parallel.waitForAll(ui,main)
