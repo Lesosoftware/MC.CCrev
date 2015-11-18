@@ -1,6 +1,0 @@
-um.a("User","test1")
-um.a("User","test2")
-um.a("User","test3")
-um.a("Admin","test4")
-um.sCol("User",colors.yellow)
-um.sCol("Admin",colors.lightBlue)

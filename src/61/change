@@ -1,2 +1,0 @@
-shell.setDir("OS/system32/TaCCo")
-_G.setTagDir = "OS/system32/TaCCo"

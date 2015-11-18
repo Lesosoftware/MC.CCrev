@@ -1,3 +1,0 @@
-term.clear()
-term.setCursorPos( 1, 2 )
-shell.writeHeader()

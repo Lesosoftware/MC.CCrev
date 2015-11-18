@@ -1,5 +1,0 @@
-num="001"
-rednet.open("back")
-rednet.send(13,"0815095")
-local id,rooom=rednet.receive(10)
-shell.run("chat join "..rooom.." "..num)

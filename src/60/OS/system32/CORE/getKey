@@ -1,4 +1,0 @@
-while true do
-  local id,key=os.pullEvent()
-  print(id..": "..key)
-end

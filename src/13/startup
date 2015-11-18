@@ -1,3 +1,0 @@
-shell.run("chat.API")
-
-shell.run("parallel itSblinking chatManager")

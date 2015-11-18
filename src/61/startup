@@ -1,5 +1,0 @@
-loadSystem = false
-
-while not _G.loadSystem do
-  shell.run("/OS/buddi")
-end

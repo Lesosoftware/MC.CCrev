@@ -1,9 +1,0 @@
-local function main()
-  while true do
-    local id,p1,p2,p3,p4 = os.pullEvent()
-    if id=="key" or id=="mouse_click" or id=="mouse_drag" then
-      local res=string.char(p1+32)
-    end
-  end
-end
-pcall(main())

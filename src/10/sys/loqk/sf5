@@ -1,3 +1,0 @@
-while true do
-  shell.run("/sys/loqk/sf6")
-end

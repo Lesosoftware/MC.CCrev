@@ -1,4 +1,0 @@
-shell.run("/repeat")
-shell.run("/blink.API")
-
-parallel.waitForAll(repeatProg,blink)

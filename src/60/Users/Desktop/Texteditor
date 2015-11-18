@@ -1,7 +1,0 @@
-local tArgs = { ... }
-if not tArgs[1] then
-  print("Benutzung: <Dateiname>")
-else
-  o =tArgs[1]
-  shell.run("/Computer/C/Programme/CORE/editor "..o)
-end

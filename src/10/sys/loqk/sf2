@@ -1,4 +1,0 @@
-while true do
-  shell.run("/sys/loqk/sf3")
-  os.reboot()
-end

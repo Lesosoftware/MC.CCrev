@@ -1,4 +1,0 @@
-accpt=0
-while accpt==0 do
-  shell.run("/OS/CORE/0.1/_adminb")
-end

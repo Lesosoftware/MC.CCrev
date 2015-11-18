@@ -1,7 +1,0 @@
-shell.run("clear")
-local label =os.getComputerLabel()
-print("Ihre Computer ID ist #"..os.getComputerID())
-if label then
-print("Ihr Computer heist")
-print(label.."\n")
-end

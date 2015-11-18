@@ -1,5 +1,0 @@
-shell.run("DevProgs/debugalias")
-shell.run("DevProgs/alias")
-term.clear()
-sleep(0)
-shell.run("OS/glub")

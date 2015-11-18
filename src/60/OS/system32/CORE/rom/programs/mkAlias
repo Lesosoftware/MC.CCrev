@@ -1,2 +1,0 @@
-local aliasPath="/OS/system32/CORE/rom/programs/"
-shell.setAlias("shutdown",aliasPath.."shutdown")

@@ -1,6 +1,0 @@
-rednet.open("bottom")
-local id,msg=rednet.receive("requestNetwork")
-if id then
-  print(msg)
-  rednet.send(id,"3284","requestNetwork")
-end
