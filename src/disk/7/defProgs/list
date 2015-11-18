@@ -1,0 +1,78 @@
+
+local tArgs = { ... }
+shell.setClockVisibility(true)
+-- Get all the files in the directory
+local sDir = shell.dir()
+if tArgs[1] ~= nil then
+	sDir = shell.resolve( tArgs[1] )
+end
+--HIDDEN--
+hiddenItems=true
+local function hidden(path)
+
+  for k,v in pairs(_G.hiddenSyst) do
+    local list=list,v
+    if v==path then
+      return true
+    end
+  end
+  if hiddenItems==true then
+    for k,v in pairs(_G.hiddenList) do
+      if v==path then
+        return true
+      end
+    end
+  else
+    return false
+  end
+  return false
+end
+
+local function tag(toTag)
+  if toTag == nil then
+    error("toTag <name> expected")
+  end
+  
+  for k,v in pairs(tagList) do
+    if toTag == v then
+      return k
+    end
+  end
+
+  return false
+end
+-- Sort into dirs/files, and calculate column count
+local tAll = fs.list( sDir )
+local tFiles = {}
+local tDirs = {}
+
+for n, sItem in pairs( tAll ) do
+	if string.sub( sItem, 1, 1 ) ~= "." then
+		local sPath = fs.combine( sDir, sItem )
+		if fs.isDir( sPath ) then
+   if hidden("/"..sPath)==false then
+     if tag("/"..sDir.."/"..sItem)==false then
+       table.insert(tDirs,sItem)
+     else
+    			table.insert( tDirs, tag("/"..sDir.."/"..sItem) )
+     end
+   end
+		else
+   if hidden("/"..sDir.."/"..sItem)==false then
+     if tag("/"..sPath)==false then
+    			table.insert( tFiles, sItem )
+     else
+       table.insert( tFiles, tag("/"..sPath))
+     end
+   end
+		end
+	end
+end
+table.sort( tDirs )
+table.sort( tFiles )
+
+if term.isColour() then
+ 	textutils.pagedTabulate( colors.green, tDirs, colors.blue, tFiles )
+else
+	 textutils.pagedTabulate( tDirs, tFiles )
+end

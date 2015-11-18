@@ -1,0 +1,2 @@
+shell.setAlias("DB","/DevProgs/debug.API")
+shell.setAlias("DBstop","/DevProgs/StopDebugging")

@@ -1,0 +1,217 @@
+--Variables
+
+dummy = function() end
+
+--Lists
+local tArgs = { ... }
+if firstStarted == nil then
+  _G["processList"] = {}
+  _G["anonym"]      = {}
+end
+
+_G["firstStarted"] = true
+--install process API
+
+_G["process"] = {}
+
+process["create"] = function(name,toProcess,...)
+
+  if (type(name) == "string") == false then
+    error("string expected got, "..type(name))
+  end
+  
+  
+  if (type(toProcess) == "function") == false then
+    error("function expected got, "..type(toProcess))
+  end
+  
+  if name == "anonym" then
+    name = string.upper(string.gsub(tostring(toProcess),"function: ",""))
+    anonym[name] = true
+  end
+   
+  processList[name] = coroutine.create(toProcess,...)
+  
+end
+
+
+process["resume"] = function(resumeProcess,...)
+  if (type(resumeProcess) == "string") == false then error("string expected, got "..type(resumeProcess)) end
+  for k,v in pairs(anonym) do
+    if string.upper(string.gsub(resumeProcess,"function: ","")) == k then resumeProcess = k end
+  end
+  coroutine.resume(processList[resumeProcess],...)
+  return true
+end
+
+process["status"] = function(process)
+  requestProcess = {}
+  for k,v in pairs(processList) do
+    requestProcess[k] = coroutine.status(processList[k])
+  end
+  
+  if (type(process) == "string" or type(process) == "nil") == false then error("string or nil expected, got "..type(process)) end
+  
+  if process == nil then return requestProcess
+  else return requestProcess[process] end
+  
+end
+
+process["start"] = function(name,toProcess,...)
+  process.create(name,toProcess,...)
+  process.resume(name,...)
+  return process.status(name)
+end
+
+process["yield"] = function(...)
+  coroutine.yield(...)
+end
+
+process["stop"] = function(name)
+  for k,v in pairs(anonym) do
+    if string.upper(string.gsub(name,"function: ","")) == k then name = k end
+  end
+  if processList[name] == nil then return false end
+  
+  processList[name] = process.start("stop",dummy)
+  processList[name] = nil
+  return true
+end
+
+process["interactive"] = function(...)
+  tmpList = {...}
+  _sFirst = function() end
+  readed = false
+  
+  allFuncs = {}
+  
+  for k,v in pairs(tmpList) do
+    for i = 1,#tmpList do
+      if readed and i == k then
+        --[[if (type(v) == "function") == false then
+          error("#"..k.." Argument function expected, got "..type(v))
+        end]]      
+        tmpCoroutine = coroutine.create(v)
+        table.insert(allFuncs,v)
+        processList[name] = tmpCoroutine
+        readed = false
+      elseif not readed and i == k then
+        --[[if not (type(v) == "string") then
+          error("#"..tostring(k).." Argument string expected, got "..tostring(type(v)))
+        end]]
+        if name == "anonym" then
+          name = string.upper(string.gsub(tostring(toProcess),"function: ",""))
+          anonym[name] = true
+        else name = v end
+        
+        readed = true
+      end
+    end
+  end
+  
+  tmpCoroutine = nil
+  parallel.waitForAll(_sFirst,table.unpack(allFuncs))
+
+end
+
+--Main program
+
+local function formatV(v)
+  if     v == "suspended" then return "unterbrochen"
+  elseif v == "normal"    then return "normal"
+  elseif v == "running"   then return "laufend"
+  elseif v == "dead"      then return "beendet"
+  end
+end
+
+function manager()
+
+  managerStarted = true
+  if (tArgs[1] == "loadAPI") == false and multishell.taskmgrOpened == nil then
+    multishell["taskmgrOpened"] = true
+    
+    taskmgrTAB = shell.openTab("/OS/system32/TaCCo/rom/programs/taskmgr")
+    multishell.setTitle(taskmgrTAB, "Task Manager")
+    shell.switchTab(taskmgrTAB)
+  end
+  if (tArgs[1] == "loadAPI") == false and multishell.taskmgrOpened == true then
+    
+    term.setBackgroundColor(colors.lightGray)
+    term.setTextColor(colors.white)
+    term.clear()
+    term.setBackgroundColor(colors.gray)
+    term.setCursorPos(1,1)
+    
+    for i = 1,51 do
+      write(" ")
+    end
+    
+    term.setCursorPos(3,1)
+    write("Name")
+    local x,y = term.getCursorPos()
+    for i = 2,18 do
+      term.setCursorPos(x+10,i)
+      write(" ")
+    end
+    
+    term.setCursorPos(1,2)
+    term.setBackgroundColor(colors.lightGray)
+    term.setTextColor(colors.black)
+    for k,v in pairs(process.status()) do
+      print(k)
+    end
+    
+    term.setBackgroundColor(colors.gray)
+    term.setCursorPos(x+13,1)
+    oldX = x+13
+    term.setTextColor(colors.white)
+    write("Status")
+    
+    term.setCursorPos(oldX,2)
+    term.setBackgroundColor(colors.lightGray)
+    term.setTextColor(colors.black)
+    y = 2
+    for k,v in pairs(process.status()) do
+      term.setCursorPos(oldX,y)
+      write(formatV(v))
+      y = y + 1
+    end
+    
+    term.setBackgroundColor(colors.red)
+    term.setTextColor(colors.white)
+    term.setCursorPos(51,18)
+    write("X")
+  end
+
+end
+
+taskserv = function()
+  while true do
+    local event,button,x,y = os.pullEvent("mouse_click")
+    if button == 1 and x == 51 and y == 1 then
+      break
+    end
+  end
+  multishell["taskmgrOpened"] = nil
+end
+
+taskmanager = function()
+  process.start("task service",taskserv)
+  
+  while true do
+    manager()
+    sleep(0.6)
+    if multishell.taskmgrOpened == nil then
+      break
+    end
+  end
+end
+
+--[[if not managerStarted and (tArgs[1] == "longAPI") == false then
+  process.interactive("taskmgr.exe",taskmanager)
+elseif (tArgs[1] == "longAPI") == false then
+  process.resume("taskmgr.exe")
+end
+
+--Ende
+]]

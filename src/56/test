@@ -1,0 +1,37 @@
+local opts={}
+local function addOpt(o,f)
+  opts[#opts+1]={o,f}
+end
+addOpt("Test",function() print("Hallo") end)
+addOpt("El2",function() print("El2") end)
+addOpt("Nummer 3",function() print("3333") end)
+local idx=1
+while true do
+  term.clear()
+  term.setCursorPos(1,1)
+  for k,v in pairs(opts) do
+    if k==idx then
+      term.setTextColor(colors.lime)
+    else
+      term.setTextColor(colors.white)
+    end
+    print(v[1])
+  end
+  local id,key=os.pullEvent("key")
+  if key==keys.down then
+    idx=idx+1
+    if idx>#opts then
+      idx=1
+    end
+  end
+  if key==keys.up then
+    idx=idx-1
+    if idx<1 then
+      idx=#opts
+    end
+  end
+  if key==keys.enter then
+    opts[idx][2]()
+    sleep(1)
+  end
+end

@@ -1,0 +1,27 @@
+function rsOut(isTrue)
+  for i=1,5 do
+    if i==1 then
+      sSide="right"
+    elseif i==2 then
+      sSide="left"
+    elseif i==3 then
+      sSide="back"
+    elseif i==4 then
+      sSide="front"
+    elseif i==5 then
+      sSide="bottom"
+    end
+    rs.setOutput(sSide,isTrue)
+  end
+end
+
+function blink()
+  while true do
+    rsOut(true)
+    sleep(1)
+    rsOut(false)
+    sleep(0.5)
+  end
+end
+
+blink()

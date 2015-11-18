@@ -1,0 +1,122 @@
+function scrSaverStart()
+  term.setCursorPos(1,1)
+  dontTerminate=true
+end
+  
+function scrOverlay()
+  for scrLoop=1,4 do
+    if scrLoop==1 then
+      scrColB=colors.red
+    elseif scrLoop==2 then
+      scrColB=colors.lime
+    elseif scrLoop==3 then
+      term.setCursorPos(51/2+2,1)
+      scrColB=colors.blue
+    elseif scrLoop==4 then
+      scrColB=colors.yellow
+    end
+    
+    for lines=1,19/2+1 do
+      for chars=1,51/2+1 do
+        if dontTerminate==false then
+          return
+        end
+        local tmpX,tmpY=term.getCursorPos()
+        if scrLoop > 2 then
+          if tmpX>52 then
+            term.setCursorPos(51/2+2,tmpY+1)
+          end
+        else
+          if tmpX>51/2+1 then
+            term.setCursorPos(1,tmpY+1)
+          end
+        end
+        term.setBackgroundColor(scrColB)
+        term.write(" ")
+      end
+      sleep(0)
+    end
+    sleep(1)
+  end
+  term.setBackgroundColor(colors.black)
+  scrY=1
+  for scrWBlack=1,19 do
+    term.setCursorPos(26,scrY)
+    write(" ")
+    scrY=scrY+1
+    sleep(0)
+  end
+  
+  scrX=1
+  for scrWBlack=1,51/3 do
+    term.setCursorPos(scrX,10)
+    write("   ")
+    scrX=scrX+3
+    sleep(0)
+  end
+  
+  scrX=1
+  for scrWBlack=1,51/3 do
+    term.setCursorPos(scrX,1)
+    write("   ")
+    scrX=scrX+3
+    sleep(0)
+  end
+  
+  scrY=1
+  for scrWBlack=1,19 do
+    term.setCursorPos(51,scrY)
+    write(" ")
+    scrY=scrY+1
+    sleep(0)
+  end
+  
+  scrX=51
+  for scrWBlack=1,51/3 do
+    term.setCursorPos(scrX,19)
+    write("   ")
+    scrX=scrX-3
+    sleep(0)
+  end
+  
+    term.setCursorPos(2,19)
+    write(" ")
+    sleep(0)
+  
+  scrY=19
+  for scrWBlack=1,19 do
+    term.setCursorPos(1,scrY)
+    write(" ")
+    scrY=scrY-1
+    sleep(0)
+  end
+  
+  while dontTerminate do
+    sleep(0.1)
+  end
+end
+
+function goOutPoint()
+  while true do
+    local id,key=os.pullEvent("key")
+    if key==keys.enter or key==keys.space then
+      break
+    end
+  end
+  if tActB==nil or tActT==nil then
+    term.setBackgroundColor(colors.black)
+  else
+    term.setBackgroundColor(tActB)
+    term.setTextColor(tActT)
+  end
+  term.clear()
+  term.setCursorPos(1,1)
+  dontTerminate=false
+end
+
+function scrSaver(tActB, tActT)
+  scrSaverStart()
+  parallel.waitForAll(scrOverlay, goOutPoint)
+end
+
+scrSaver()

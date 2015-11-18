@@ -1,0 +1,2 @@
+shell.setAlias("edit","/DevProgs/editLang")
+shell.setAlias("func","/DevProgs/showFunction")

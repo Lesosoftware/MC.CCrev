@@ -1,0 +1,126 @@
+term.setBackgroundColor(colors.purple)
+term.clear()
+term.setCursorBlink(false)
+
+term.setCursorPos(18,1)
+term.write("GLUB-Bootloader")
+
+term.setTextColor(colors.black)
+term.setCursorPos(35,19)
+term.write("Lesosoftware Ing.")
+
+fils=fs.list("/OS/system32")
+systms={}
+for k,v in pairs(fils) do
+  if fs.isDir("/OS/system32/"..v) then
+    systms[#systms+1]=v
+  end
+end
+actSys=1
+
+local cnnt=20
+
+function cntDn()
+  while cnnt > 0 and cnnt < 21 do
+    local x,y = term.getCursorPos()
+    term.setCursorPos(1,17)
+    term.setTextColor(colors.orange)
+    term.setBackgroundColor(colors.purple)
+    term.write("Auswahl wird automatisch ausgeführt in "..cnnt)
+    term.setCursorPos(43,17)
+    term.write(" Sekunden! ")
+    term.setCursorPos(x,y)
+    term.setTextColor(colors.black)
+    if cnnt==20 then
+      sleep(0.3)
+    end
+    cnnt=cnnt-1
+    sleep(1)
+  end
+  if cnnt <= 0 then
+    launchSys()
+  end
+end
+
+function main()
+  while true do
+    term.setCursorPos(1,3)
+    term.write("                  ")
+    for k,v in pairs(systms) do
+      if k==actSys then
+        term.setTextColor(colors.white)
+        term.setBackgroundColor(colors.orange)
+      else
+        term.setTextColor(colors.black)
+      end
+      print("  "..v.."  ")
+      term.setBackgroundColor(colors.purple)
+      term.write("                  ")
+    end
+    local id,key=os.pullEvent("key")
+    if key==keys.down then
+      actSys=actSys+1
+      if actSys > #systms then
+        actSys=1
+      end
+    end
+    if key==keys.up then
+      actSys=actSys-1
+      if actSys < 1 then
+        actSys=#systms
+      end
+    end
+    if key==keys.enter then
+      if cnnt > 0 then
+        cnnt=21
+        launchSys()
+      end
+    end
+    cnnt=21
+    term.setCursorPos(1,17)
+    term.write("                                                   ")
+  end
+end
+function launchSys()
+  term.setBackgroundColor(colors.black)
+  term.setTextColor(colors.white)
+  term.setCursorPos(1,1)
+  term.clear()
+  shell.run("/OS/system32/"..systms[actSys].."/startup")
+  term.setBackgroundColor(colors.black)
+  term.clear()
+  term.setCursorPos(1,1)
+  term.setTextColor(colors.white)
+  term.setCursorBlink(true)
+  os.pullEvent()
+  term.setBackgroundColor(colors.black)
+  term.setCursorBlink(false)
+  term.clear()
+  sleep(0.7)
+  term.setBackgroundColor(colors.magenta)
+  term.clear()
+  actCol=0
+  FRNZL(1,2)
+  FRNZL(16,5)
+  term.setCursorPos(1,1)
+  sleep(0.01)
+  term.setBackgroundColor(colors.black)
+  term.clear()
+  sleep(1.37)
+  os.reboot()
+end
+function FRNZL(ansatz,lange)
+  for y=0,lange-1 do
+    term.setCursorPos(1,ansatz+y)
+    for x=1,51 do
+      if actCol==0 then
+        term.setBackgroundColor(colors.magenta)
+      else
+        term.setBackgroundColor(colors.lime)
+      end
+      term.write(" ")
+      actCol=1-actCol
+    end
+  end
+end
+parallel.waitForAll(main,cntDn)

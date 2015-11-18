@@ -1,0 +1,113 @@
+_G["CORE"] = {}
+
+CORE["version"]=function()
+  return COREversion
+end
+
+local function ERROR(text)
+  term.setTextColour(colours.red)
+  print(text)
+end
+
+CORE["helpAll"] = function()
+
+  print("Functions of the CORE API")
+  for k,v in pairs(CORE) do
+    print("CORE."..k.."()")
+  end
+  print("For further information write: CORE <command>")
+  
+end
+
+CORE["help"] = function(command)
+
+  if command == nil then
+    print("Usage: CORE.help(command)")
+  end
+  
+  if command == "readFile" then
+    print("Usage: CORE.readFile( path, [string], [toString] )") 
+  end
+  
+  if command == "writeFile" then
+    print("Usage: CORE.writeFile( path)")
+  end
+  
+  if command == "bindKey" then
+    print("Usage: CORE.bindKey( key, function )")
+  end
+  
+  
+  if command == "unbindKey" then
+    print("Usage: CORE.unbindKey( key )")
+  end
+
+end
+
+CORE["bindKey"] = function(key, func)
+
+  shell.keybindings[key] = func
+
+end
+
+CORE["unbindKey"]=function(key)
+  
+  shell.keybindings[key]=function() end
+
+end
+
+CORE["readFile"] = function(pathR, line)
+
+  fileExists = fs.exists(pathR)
+  isFolder = fs.isDir(pathR)
+  
+  if isFolder then
+    ERROR("Error: is not a file")
+    return
+  end
+  
+  if fileExists == false then
+    ERROR("Error: file doesen't exists")
+    return
+  end
+    
+  readFile = io.open( pathR, "r" )
+  tmp = readFile.read()
+  rFile = ""
+  tmpCntr=1
+    
+  while (tmp == nil) == false do
+    if line==nil or line==tmpCntr then
+      rFile = rFile.."\n"..tmp
+    end
+    tmpCntr = tmpCntr + 1
+    tmp = readFile.read()
+  end
+    
+  if (rFile == "") == false then
+    rFile = string.sub(rFile,2)
+  end
+    
+  readFile:close()
+  
+  return rFile
+         
+end
+  
+CORE["writeFile"] = function(pathW,type,text)
+  
+  if fs.exist(pathW) then
+    if (fs.isDir(pathW))==false then
+      writeFile = io.open(pathW, type)
+      writeFile:write(text)
+      writeFile:close()
+    else
+      ERROR("Error: is not a file")
+    end
+  else
+    ERROR("Error: file doesn't exist")
+  end
+  
+end
+
+CoreAPI_started=true

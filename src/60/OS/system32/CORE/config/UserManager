@@ -1,0 +1,42 @@
+local COREpath="/OS/system32/CORE/"
+
+term.setBackgroundColor(colors.white)
+term.clear()
+term.setCursorPos(1,1)
+term.setBackgroundColor(colors.lime)
+print("                                                   ")
+for k1,v1 in pairs(_G.Users) do
+  if (k1=="col")==false then
+    local tmpVailed=function()
+      term.setBackgroundColor(colors.gray)
+      term.setTextColor(colors.lime)
+      --print("                                                   ")
+      print("                                                   ")
+      local x,y = term.getCursorPos()
+      term.setCursorPos(x, y-1)
+      print(" "..k1.."s")
+      print("                                                   ")
+      term.setBackgroundColor(colors.lightGray)
+      print("  ")
+      term.setBackgroundColor(colors.white)
+      for k2,v2 in pairs(v1) do
+        term.setBackgroundColor(Users.col[k1])
+        term.setTextColor(colors.black) 
+        term.write(" ")
+        term.setBackgroundColor(colors.lightGray)
+        term.write(" ")
+        term.setBackgroundColor(colors.white)
+        print(" "..v2)
+      end
+      term.setTextColor(colors.lime)
+      term.setBackgroundColor(colors.lightGray)
+      print("  ")
+    end
+    if pcall(tmpVailed)==false then
+      term.setTextColour(colours.red)
+      print("Error: Corrupt User-Entry")
+    end
+  end
+  term.setBackgroundColor(colors.gray)
+  print("                                                   ")
+end

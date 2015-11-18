@@ -1,0 +1,13 @@
+programm=0
+function zeitAnzeigen()
+  while programm==0 do
+    local nTime = os.time()
+    local nDay  = os.day()
+    local tForm = textutils.formatTime( nTime, false ).." "..nDay..". Tag"
+    local x,y=term.getCursorPos()
+    term.setCursorPos(50-string.len(tForm),19)
+    term.write(tForm)
+    term.setCursorPos(x,y)
+    sleep(0.01)
+  end
+end

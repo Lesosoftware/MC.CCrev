@@ -1,0 +1,21 @@
+print("")
+local x,y=term.getCursorPos()
+y=y-1
+term.setTextColor(colors.red)
+term.setCursorPos(x,y)
+print("No such program")
+term.setTextColor(colors.yellow)
+term.write(shell.dir().."> ")
+x=#shell.dir()+3
+term.setTextColor(colors.white)
+for i=1,2 do
+  term.setCursorPos(x,y-1)
+  textutils.slowPrint("DANKE",50)
+  term.setCursorPos(x,y+1)
+  term.write("_")
+  term.setCursorPos(x,y-1)
+  textutils.slowPrint("danke",50)
+  term.setCursorPos(x,y+1)
+  term.write(" ")
+end
+term.setCursorPos(1,y+1)

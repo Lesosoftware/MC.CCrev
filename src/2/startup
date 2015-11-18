@@ -1,0 +1,8 @@
+term.clear()
+term.setCursorPos(1,1)
+paintutils.drawImage(paintutils.loadImage("/sys/logo"),1,1)
+term.setCursorPos(6,20)
+term.setBackgroundColor(colors.black)
+term.write("Lesosoftware Ing.")
+sleep(0.7)
+shell.run("/sys/sh")

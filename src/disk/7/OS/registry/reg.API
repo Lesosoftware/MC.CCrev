@@ -1,0 +1,112 @@
+_G["reg"]={}
+
+regAPIstarted=true
+
+_G["regAPI"]=function()
+  apiPath="/OS/registry/APIs/"
+  apiList=fs.list(apiPath)
+  if #apiList>0 then
+    for kA,v in pairs(apiList) do
+      shell.run(apiPath..v)
+      ProgressBarAPI=kA*100/#apiList
+      sleep(0)
+    end
+  end
+end
+
+_G["regProgs"]=function()
+  ProgsPath="/OS/registry/programs/"
+  ProgsList=fs.list(ProgsPath)
+  for kP,v in pairs(ProgsList) do
+    if #ProgsList>0 then
+      shell.run(ProgsPath..v)
+      ProgressBarProgs=kP*100/#ProgsList
+      sleep(0)
+    end
+  end
+end
+
+_G["isDefFile"]=function()
+  if fs.exists("/OS/registry/defFile")==false then
+      defFileOpen=io.open("/OS/registry/defFile","w")
+      defFileOpen:write("_G['defProgs']={}")
+      defFileOpen:close()
+  end
+end
+
+
+reg["load"]=function(isAPI)
+  if isAPI then
+    regAPI()
+  elseif isAPI==false then
+    regProgs()
+  elseif isAPI==nil then
+    error("expected got nil")
+  end
+end
+
+reg["loadDefProgs"]=function()
+  isDefFile()
+  shell.run("/OS/registry/defFile")
+end
+
+reg["assign"]=function(isAPI,regName,regRealation,asPath)
+  if isAPI then
+    regWritePath= "/OS/registry/APIs/"
+    regLoc="API"
+  elseif isAPI==false then
+    regWritePath= "/OS/registry/programs/"
+    regLoc="Progs"
+  else
+    return
+  end
+  regFile=io.open(regWritePath..regName,"a")
+  regFile:write("_G['reg"..regLoc..'_'..regRealation.."']=".."'"..asPath.."'\n")
+  regFile:close()
+end
+
+reg["setStandardProg"]=function(path,ending)
+  isDefFile()
+  defFile=io.open("/OS/registry/defFile","a")
+  defFile:write("_G['defProgs']['"..ending.."']=".."'"..path.."'\n")
+  defFile:close()
+end
+
+reg["hideItem"]=function(path,name)
+  if fs.exists("/OS/registry/hiddenFile")==false then
+    firstWrite="hiddenList={}\n"
+  else
+    firstWrite=false
+  end
+  hideFile=io.open("/OS/registry/hiddenFile","a")
+  if (firstWrite==nil)==false then
+    hideFile:write(firstWrite)
+  end
+  hideFile:write("_G['hiddenList']['"..name.."']=".."'"..path.."'\n")
+  hideFile:close()
+end
+
+reg["loadHidden"]=function()
+  shell.run("/OS/registry/hiddenFile")
+end
+
+reg["tag"]=function(toTag,tPath)
+  if fs.exists("/OS/registry/tagFile")==false then
+    tFirst=true
+  else
+    tFirst=false
+  end
+  
+  tagFile=io.open("/OS/registry/tagFile","a")
+  
+  if tFirst then
+    tagFile:write("_G['tagList']={}\n")
+  end
+  
+  tagFile:write("tagList['"..toTag.."']='"..tPath.."'\n")  
+  tagFile:close()
+end
+
+reg["loadTag"]=function()
+  shell.run("/OS/registry/tagFile")
+end

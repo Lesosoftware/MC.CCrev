@@ -1,0 +1,5 @@
+chatWLAN={}
+
+chatWLAN["new"] function(tel)
+  shell.run("parallel chat host "..tel)
+end

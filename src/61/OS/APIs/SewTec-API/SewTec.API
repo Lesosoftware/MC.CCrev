@@ -1,0 +1,106 @@
+_G["SewTec"] = {}
+
+SewTecVersion="Sewbacca Technologies Inc."
+
+SewTec["version"] = function()
+  return SewTecVersion
+end
+
+local function ERROR(text)
+  term.setTextColour(colours.red)
+  print(text)
+end
+
+SewTec["helpAll"] = function()
+
+  print("Functions of the SewTec API")
+  for k,v in pairs(SewTec) do
+    print("SewTec."..k.."()")
+  end
+  print("For further information write: SewTec <command>")
+  
+end
+
+SewTec["help"] = function(command)
+
+  if command == nil then
+    print("Usage: SewTec.help(command)")
+  end
+  
+  if command == "readFile" then
+    print("Usage: SewTec.readFile( path, [string], [toString] )") 
+  end
+  
+  if command == "writeFile" then
+    print("Usage: SewTec.writeFile( path)")
+  end
+
+end
+
+SewTec["bindKey"] = function(key, func)
+
+  shell.keybindings[key] = func
+
+end
+
+SewTec["unbindKey"]=function(key)
+  
+  shell.keybindings[key]=function() end
+
+end
+
+SewTec["readFile"] = function(pathR, line)
+
+  fileExists = fs.exists(pathR)
+  isFolder = fs.isDir(pathR)
+  
+  if isFolder then
+    ERROR("Error: is not a file")
+    return
+  end
+  
+  if fileExists == false then
+    ERROR("Error: file doesen't exists")
+    return
+  end
+    
+  readFile = io.open( pathR, "r" )
+  tmp = readFile.read()
+  rFile = ""
+  tmpCntr=1
+    
+  while (tmp == nil) == false do
+    if line==nil or line==tmpCntr then
+      rFile = rFile.."\n"..tmp
+    end
+    tmpCntr = tmpCntr + 1
+    tmp = readFile.read()
+  end
+    
+  if (rFile == "") == false then
+    rFile = string.sub(rFile,2)
+  end
+    
+  readFile:close()
+  
+  return rFile
+         
+end
+  
+SewTec["writeFile"] = function(pathW,type,text)
+  
+  if fs.exist(pathW) then
+    if (fs.isDir(pathW))==false then
+      writeFile = io.open(pathW, type)
+      writeFile:write(text)
+      writeFile:close()
+    else
+      ERROR("Error: is not a file")
+    end
+  else
+    ERROR("Error: file doesn't exist")
+  end
+  
+end
+
+SewTecAPI_started=true

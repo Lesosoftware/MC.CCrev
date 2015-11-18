@@ -1,0 +1,5 @@
+rednet.open("bottom")
+local id,port = rednet.receive()
+local id,thePort = rednet.receive(port)
+sleep(0.1)
+rednet.send("192.168."..os.getComputerID()..".2",port)
