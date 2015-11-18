@@ -1,6 +1,6 @@
 rednet.open("bottom")
-local id,msg=rednet.receive("requestNetwork")
+local id,msg=rednet.receive("request:Network")
 if id then
   print(msg)
-  rednet.send(id,"3284","requestNetwork")
+  rednet.send(id,"3284","request:Network")
 end
