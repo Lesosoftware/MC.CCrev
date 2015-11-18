@@ -95,12 +95,9 @@ network["host"] = function()
     while true do
       local id,noAnswer = rednet.receive("request:Network")
       noAnswer = tonumber(noAnswer) + timeout
-      if nAns[id] and timeout>=noAnswer + 1 then
-        nAns[id] = nil
-      elseif nAns[id] and timeout<=noAnswer + 1 then
+      if not nAns[id] or timeout >= nAns[id] then
+        rednet.send(id,"_","request:Network")
         nAns[id] = noAnswer
-      else
-        rednet.send(id,os.getComputerID(),"request:Network")
       end
     end
   end
