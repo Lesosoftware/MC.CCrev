@@ -1,0 +1,35 @@
+local tArgs = {...}
+
+function h ()
+  while true do
+    susclub(1)
+  end
+  newClub()
+end
+
+function a(asd)
+  if club then
+    a = a+1
+    ls = asd
+    eppe(asd)
+  end
+end
+
+function susclub(num)
+  club = num
+end
+
+function slep()
+  sleep(1)
+end
+
+function start()
+  a = 1
+  c = 1
+  c = c + 1
+  s = c
+  
+  parallel.waitForAll(start,start)
+end
+
+parallel.waitForAll(start,start)
