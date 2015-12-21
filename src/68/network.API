@@ -3,6 +3,11 @@
 network = {}
 sides   = {"left","right","front","back","top","bottom"}
 
+--Global variables
+
+myID    = os.getComputerID()
+myLabel = os.getComputerLabel()
+
 --Shortcuts
 
 local function openModem()
@@ -10,8 +15,7 @@ local function openModem()
   
   for _,side in pairs(sides) do
     if peripheral.getType(side) == "modem" then
-      if rednet.isOpen(side) then table.insert(openSides,side)
-      else rednet.open(side) end
+      rednet.open(side)
     end
   end
   
@@ -33,18 +37,20 @@ network["search"] = function (networkAmount,timeout)
   local timeout = timeout or 2
   local networks = {}
   openModem()
+  
   for i = 1,networkAmount do
     rednet.broadcast(tostring(timeout*networkAmount),"request:Network")
-    local ID,_ = rednet.receive("request:Network",timeout)
-    table.insert(networks,ID)
+    local ID,Label = rednet.receive("request:routerData",timeout)
+    networks[ID] = Label
   end
+  
   return networks
 end
 
 network["connect"] = function(routerID,timeout)
   testType(routerID,"number","connect")
   timeout = timeout or 3
-  rednet.send(routerID,os.getComputerLabel(),"request:userData")
+  rednet.send(routerID,myLabel or "-","request:userData")
   local ID,myIP = rednet.receive("request:userData",timeout)
   if not routerID == ID then
     return false
@@ -57,6 +63,13 @@ end
 network["host"] = function()
   openModem()
   
+  function execCommand(IP,command)
+    if command == "disconnect" then
+      connectedDevices[IP] = nil
+      oldIPs[count] = nil
+    end
+  end
+  
   function timer()
     timeout = 0
     while true do
@@ -66,27 +79,57 @@ network["host"] = function()
   end
   
   function userUI()
+    term.clear()
+    term.setCursorPos(1,1)
+    for count,ID in pairs(connectedDevices) do
+      print(ID," || IP: ","192.168.",myID,".",count)
+    end
+  end
+
+  oldIPs = {}
+  
+  function Main()
+    receiveIPs = {}
     while true do
       coroutine.yield()
-      term.clear()
-      term.setCursorPos(1,1)
-      for ID,name in pairs(connectedDevices) do
-        print(name," ",ID)
+      for count,ID in pairs(connectedDevices) do
+        formatIP = "192.168."..myID.."."..count
+        if not oldIPs[count] then
+          receiveIPs[count] = function()
+            while connectedDevices[count] do
+              local ID,command = rednet.receive(formatIP)
+              execCommand(count,command)
+            end
+          end
+          table.insert(oldIPs,count)
+        end
       end
+      newItem = true
     end
+  end
+  
+  function receive()
+    while true do
+      if newItem then break end
+      sleep(0)
+    end
+    
+    parallel.waitForAll(table.unpack(receiveIPs),receive)
   end
   
   function connect()
     connectedDevices = {}
-    connectedDevices["192.168."..os.getComputerID()..".1"] = os.getComputerID()
+    connectedDevices[1] = "ID: "..myID.." - Label: "..(myLabel or "TaCCo-Router")
+    userUI()
+    count = 1
     while true do
-      local count = (count or 1)+1
+      count = count + 1
       local computerID,label = rednet.receive("request:userData")
-      print(computerID," ",label)
-      formatIP = "192.168."..os.getComputerID().."."..count
+      formatIP = "192.168."..myID.."."..count
       rednet.send(computerID,formatIP,"request:userData")
-      connectedDevices[formatIP] = computerID
-      coroutine.resume(userUI)
+      connectedDevices[count] = "ID: "..computerID.." - Label: "..label
+      coroutine.resume(Main)
+      userUI()
     end
   end
   
@@ -95,20 +138,15 @@ network["host"] = function()
     while true do
       local id,noAnswer = rednet.receive("request:Network")
       noAnswer = tonumber(noAnswer) + timeout
-      if nAns[id] and timeout>=noAnswer + 1 then
-        nAns[id] = nil
-      elseif nAns[id] and timeout<=noAnswer + 1 then
+      if not nAns[id] or timeout >= nAns[id] then
+        rednet.send(id,myLabel or "TaCCo-Router","request:routerData")
         nAns[id] = noAnswer
-      else
-        rednet.send(id,os.getComputerID(),"request:Network")
       end
     end
   end
-  
-  userUI = coroutine.create(userUI)
-  function resume() coroutine.resume(userUI) end
-  parallel.waitForAll(connect,giveSearchAnswer,resume,timer)
-  
+  Main = coroutine.create(Main)
+  function startMain() coroutine.resume(Main) end
+  parallel.waitForAll(connect,giveSearchAnswer,startMain,timer)
 end
 
 --End

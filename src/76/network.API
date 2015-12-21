@@ -1,0 +1,154 @@
+--Lists
+
+network = {}
+sides   = {"left","right","front","back","top","bottom"}
+
+--Global variables
+
+myID    = os.getComputerID()
+myLabel = os.getComputerLabel()
+
+--Shortcuts
+
+local function openModem()
+  local  openSides,closeSides = {},{}
+  
+  for _,side in pairs(sides) do
+    if peripheral.getType(side) == "modem" then
+      rednet.open(side)
+    end
+  end
+  
+  if #openSides == 0 and #closeSides == 0 then return false end
+  
+  return true
+end
+
+local function testType(test,tType,func)
+  if type(test) ~= tType then
+    error("network."..func.." "..tType.." expected, got "..type(test))
+  end
+end
+
+--Install Client Network API
+
+network["search"] = function (networkAmount,timeout)
+  local networkAmount = networkAmount or 16
+  local timeout = timeout or 2
+  local networks = {}
+  openModem()
+  
+  for i = 1,networkAmount do
+    rednet.broadcast(tostring(timeout*networkAmount),"request:Network")
+    local ID,Label = rednet.receive("request:routerData",timeout)
+    networks[ID] = Label
+  end
+  
+  return networks
+end
+
+network["connect"] = function(routerID,timeout)
+  testType(routerID,"number","connect")
+  timeout = timeout or 3
+  rednet.send(routerID,myLabel or "-","request:userData")
+  local ID,myIP = rednet.receive("request:userData",timeout)
+  if not routerID == ID then
+    return false
+  end
+  network["localIP"] = myIP
+end
+
+--Install Router Network API
+
+network["host"] = function()
+  openModem()
+  
+  function execCommand(IP,command)
+    if command == "disconnect" then
+      connectedDevices[IP] = nil
+      oldIPs[count] = nil
+      userUI()
+    end
+  end
+  
+  function timer()
+    timeout = 0
+    while true do
+      sleep(1)
+      timeout = timeout+1
+    end
+  end
+  
+  function userUI()
+    term.clear()
+    term.setCursorPos(1,1)
+    for count,ID in pairs(connectedDevices) do
+      print(ID," || IP: ","192.168.",myID,".",count)
+    end
+  end
+
+  oldIPs = {}
+  
+  function Main()
+    receiveIPs = {}
+    while true do
+      coroutine.yield()
+      for count,ID in pairs(connectedDevices) do
+        formatIP = "192.168."..myID.."."..count
+        if not oldIPs[count] then
+          receiveIPs[count] = function()
+            while connectedDevices[count] do
+              local ID,command = rednet.receive(formatIP)
+              execCommand(count,command)
+            end
+          end
+          table.insert(oldIPs,count)
+        end
+      end
+      newItem = true
+    end
+  end
+  
+  function receive()
+    while true do
+      if newItem then break end
+      sleep(0)
+    end
+    
+    parallel.waitForAll(table.unpack(receiveIPs),receive)
+  end
+  
+  function connect()
+    connectedDevices = {}
+    connectedDevices[1] = "ID: "..myID.." - Label: "..(myLabel or "TaCCo-Router")
+    userUI()
+    count = 1
+    while true do
+      count = count + 1
+      local computerID,label = rednet.receive("request:userData")
+      formatIP = "192.168."..myID.."."..count
+      rednet.send(computerID,formatIP,"request:userData")
+      connectedDevices[count] = "ID: "..computerID.." - Label: "..label
+      coroutine.resume(Main)
+      userUI()
+    end
+  end
+  
+  function giveSearchAnswer()
+    nAns = {}
+    while true do
+      local id,noAnswer = rednet.receive("request:Network")
+      noAnswer = tonumber(noAnswer) + timeout
+      if not nAns[id] or timeout >= nAns[id] then
+        rednet.send(id,myLabel or "TaCCo-Router","request:routerData")
+        nAns[id] = noAnswer
+      end
+    end
+  end
+  Main = coroutine.create(Main)
+  function startMain() coroutine.resume(Main) end
+  parallel.waitForAll(connect,giveSearchAnswer,startMain,timer)
+  
+end
+
+--End
